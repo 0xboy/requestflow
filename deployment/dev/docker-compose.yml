@@ -1,0 +1,26 @@
+services:
+  requestflow:
+    build:
+      context: ../..
+      dockerfile: deployment/shared/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    # Uncomment when SQL Server is added:
+    # depends_on:
+    #   - sqlserver
+
+  # Uncomment for local SQL Server:
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=YourStrong@Passw0rd
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - sqlserver_data:/var/opt/mssql
+  # volumes:
+  #   sqlserver_data:
