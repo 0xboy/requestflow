@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RequestFlow/RequestFlow.csproj" />
+  </Folder>
+  <Folder Name="/src/RequestFlow.Core/">
+    <Project Path="src/RequestFlow.Core/RequestFlow.Application/RequestFlow.Application.csproj" />
+    <Project Path="src/RequestFlow.Core/RequestFlow.Domain/RequestFlow.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/RequestFlow.Infrastructure/">
+    <Project Path="src/RequestFlow.Infrastructure/RequestFlow.Infrastructure/RequestFlow.Infrastructure.csproj" />
+    <Project Path="src/RequestFlow.Infrastructure/RequestFlow.Persistence/RequestFlow.Persistence.csproj" />
+  </Folder>
+</Solution>
