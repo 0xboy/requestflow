@@ -1,0 +1,56 @@
+@model List<RequestFlow.Models.RequestListViewModel>
+@{
+    ViewData["Title"] = "Request List";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Create New Request</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-3 mb-3">
+    <div class="col-md-2">
+        <input type="text" name="search" class="form-control" placeholder="Search by title" />
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select" asp-items="@(new SelectList(new[] { "", "Draft", "PendingApproval", "Approved", "Rejected" }, ""))"></select>
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="fromDate" class="form-control" placeholder="From" />
+    </div>
+    <div class="col-md-2">
+        <input type="date" name="toDate" class="form-control" placeholder="To" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Request No</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Created Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RequestNo</td>
+                <td>@item.Title</td>
+                <td><span class="badge bg-secondary">@item.Status</span></td>
+                <td>@item.Priority</td>
+                <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,16 @@
+@model RequestFlow.Models.ApproveRejectViewModel
+@{
+    ViewData["Title"] = "Approve Request";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Are you sure you want to approve request <strong>@Model.RequestNo</strong> - @Model.Title?</p>
+
+<form asp-action="Approve" method="post">
+    <input type="hidden" asp-for="RequestId" />
+    <input type="hidden" asp-for="RequestNo" />
+    <input type="hidden" asp-for="Title" />
+    <button type="submit" class="btn btn-success">Approve</button>
+    <a asp-action="Details" asp-route-id="@Model.RequestId" class="btn btn-secondary">Cancel</a>
+</form>

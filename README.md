@@ -150,6 +150,8 @@ Internal request creation, approval, and tracking system. Role-based ASP.NET MVC
 ```
 RequestFlow/
 ├── src/
+│   ├── Core/                             # Shared, middleware, cross-cutting
+│   │   └── RequestFlow.Shared/
 │   ├── RequestFlow.Core/
 │   │   ├── RequestFlow.Domain/
 │   │   └── RequestFlow.Application/

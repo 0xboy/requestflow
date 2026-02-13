@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RequestFlow.Models;
 
@@ -8,19 +9,22 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
+    // TODO: Inject IMediator when dashboard feature is implemented
+    // private readonly IMediator _mediator;
+
     public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
     }
 
-    public IActionResult Index()
+    [Authorize]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
     {
-        return View();
-    }
+        // TODO: Send GetDashboardQuery via MediatR
+        // var result = await _mediator.Send(new GetDashboardQuery(), cancellationToken);
 
-    public IActionResult Privacy()
-    {
-        return View();
+        var model = new DashboardViewModel { TotalRequestCount = 0, PendingApprovalCount = 0, IsManager = false };
+        return View(model);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

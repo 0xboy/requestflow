@@ -1,10 +1,27 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using RequestFlow.Application;
+using RequestFlow.Infrastructure;
+using RequestFlow.Persistence;
+using RequestFlow.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddShared();
 builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddControllersWithViews();
+
+// TODO: Replace with ASP.NET Core Identity when implemented
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Error/Unauthorized";
+        options.ReturnUrlParameter = "returnUrl";
+    });
 
 var app = builder.Build();
 
@@ -21,6 +38,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

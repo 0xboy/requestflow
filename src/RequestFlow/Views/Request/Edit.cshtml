@@ -1,0 +1,36 @@
+@model RequestFlow.Models.RequestEditViewModel
+@{
+    ViewData["Title"] = "Edit Request";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="RequestTypeId" class="form-label"></label>
+        <select asp-for="RequestTypeId" class="form-select" asp-items="@(new SelectList(new[] { new { Id = 1, Name = "General" } }, "Id", "Name"))"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" class="form-select" asp-items="@(new SelectList(new[] { "Low", "Medium", "High" }))"></select>
+    </div>
+    <p class="text-muted">Status: @Model.Status</p>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

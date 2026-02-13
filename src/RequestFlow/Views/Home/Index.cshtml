@@ -1,8 +1,62 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model RequestFlow.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>@ViewData["Title"]</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Requests</h5>
+                <p class="card-text display-6">@Model.TotalRequestCount</p>
+            </div>
+        </div>
+    </div>
+    @if (Model.IsManager)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Approval</h5>
+                    <p class="card-text display-6">@Model.PendingApprovalCount</p>
+                    <a asp-controller="Request" asp-action="Index" asp-route-status="PendingApproval" class="btn btn-sm btn-primary">View</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+<h4>Recent Requests</h4>
+@if (Model.RecentRequests.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Request No</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.RecentRequests)
+            {
+                <tr>
+                    <td>@item.RequestNo</td>
+                    <td>@item.Title</td>
+                    <td><span class="badge bg-secondary">@item.Status</span></td>
+                    <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
+                    <td><a asp-controller="Request" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No requests yet.</p>
+    <a asp-controller="Request" asp-action="Create" class="btn btn-primary">Create your first request</a>
+}

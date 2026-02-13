@@ -2,6 +2,9 @@
   <Folder Name="/src/">
     <Project Path="src/RequestFlow/RequestFlow.csproj" />
   </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/RequestFlow.Shared/RequestFlow.Shared.csproj" />
+  </Folder>
   <Folder Name="/src/RequestFlow.Core/">
     <Project Path="src/RequestFlow.Core/RequestFlow.Application/RequestFlow.Application.csproj" />
     <Project Path="src/RequestFlow.Core/RequestFlow.Domain/RequestFlow.Domain.csproj" />

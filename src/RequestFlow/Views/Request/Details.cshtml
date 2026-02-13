@@ -1,0 +1,45 @@
+@model RequestFlow.Models.RequestDetailViewModel
+@{
+    ViewData["Title"] = "Request Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<dl class="row">
+    <dt class="col-sm-2">Request No</dt>
+    <dd class="col-sm-10">@Model.RequestNo</dd>
+
+    <dt class="col-sm-2">Title</dt>
+    <dd class="col-sm-10">@Model.Title</dd>
+
+    <dt class="col-sm-2">Description</dt>
+    <dd class="col-sm-10">@Model.Description</dd>
+
+    <dt class="col-sm-2">Request Type</dt>
+    <dd class="col-sm-10">@Model.RequestType</dd>
+
+    <dt class="col-sm-2">Priority</dt>
+    <dd class="col-sm-10">@Model.Priority</dd>
+
+    <dt class="col-sm-2">Status</dt>
+    <dd class="col-sm-10"><span class="badge bg-secondary">@Model.Status</span></dd>
+
+    <dt class="col-sm-2">Created By</dt>
+    <dd class="col-sm-10">@Model.CreatedBy</dd>
+
+    <dt class="col-sm-2">Created Date</dt>
+    <dd class="col-sm-10">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
+</dl>
+
+<div class="mt-3">
+    @if (Model.CanEdit)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    }
+    @if (Model.CanApprove)
+    {
+        <a asp-action="Approve" asp-route-id="@Model.Id" class="btn btn-success">Approve</a>
+        <a asp-action="Reject" asp-route-id="@Model.Id" class="btn btn-danger">Reject</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

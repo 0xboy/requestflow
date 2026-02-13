@@ -1,0 +1,25 @@
+@model RequestFlow.Models.ApproveRejectViewModel
+@{
+    ViewData["Title"] = "Reject Request";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Rejecting request <strong>@Model.RequestNo</strong> - @Model.Title</p>
+
+<form asp-action="Reject" method="post">
+    <input type="hidden" asp-for="RequestId" />
+    <input type="hidden" asp-for="RequestNo" />
+    <input type="hidden" asp-for="Title" />
+    <div class="mb-3">
+        <label asp-for="RejectionReason" class="form-label"></label>
+        <textarea asp-for="RejectionReason" class="form-control" rows="3" required></textarea>
+        <span asp-validation-for="RejectionReason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-danger">Reject</button>
+    <a asp-action="Details" asp-route-id="@Model.RequestId" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
