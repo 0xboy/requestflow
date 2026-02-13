@@ -1,112 +1,111 @@
-# Talep Yönetim Sistemi - Interview Assignment
+# RequestFlow
 
-Kurum içi talep oluşturma, onaylama ve takip sistemi. Rol bazlı ASP.NET MVC uygulaması.
-
----
-
-## 📋 Proje Özeti
-
-| Özellik | Değer |
-|---------|-------|
-| **Proje Adı** | Talep Yönetim Sistemi |
-| **Teslim Süresi** | 5 Gün |
-| **Mimari Yaklaşım** | 3-Tier (Presentation / Business / Data) |
-| **Rol** | Yazılım Mimarı (Tasarım) / Yazılım Mühendisi (Kodlama) |
+Internal request creation, approval, and tracking system. Role-based ASP.NET MVC web application.
 
 ---
 
-## 🛠 Teknik Stack
+## 📋 Project Overview
 
-| Bileşen | Teknoloji |
-|---------|-----------|
+| Item | Value |
+|------|-------|
+| **Project Name** | RequestFlow |
+| **Architecture** | 3-Tier (Presentation / Business / Data) |
+| **Type** | Portfolio / Technical Assessment |
+
+---
+
+## 🛠 Tech Stack
+
+| Component | Technology |
+|-----------|------------|
 | Framework | ASP.NET MVC (.NET Core 6+) |
 | ORM | Entity Framework Core (Code First) |
-| Veritabanı | MS SQL Server |
+| Database | MS SQL Server |
 | View Engine | Razor Views |
 | CSS Framework | Bootstrap 5 |
 | Authentication | ASP.NET Core Identity / Cookie-based |
 
 ---
 
-## 👥 Roller ve Yetkiler
+## 👥 Roles & Permissions
 
-| Rol | Yetkiler |
-|-----|----------|
-| **Kullanıcı** | Talep oluşturur, düzenler, sadece kendi taleplerini görür |
-| **Yönetici** | Tüm talepleri görür, onaylar/reddeder |
-| **Admin** (opsiyonel) | Kullanıcı & rol yönetimi |
+| Role | Permissions |
+|------|-------------|
+| **User** | Create and edit requests, view own requests only |
+| **Manager** | View all requests, approve or reject |
+| **Admin** (optional) | User & role management |
 
 ---
 
-## 🗺 Geliştirme Roadmap
+## 🗺 Development Roadmap
 
-### Faz 0: Hazırlık (Gün 0)
-- [ ] Proje yapısı oluşturma (Solution, projeler)
-- [ ] Git repository kurulumu, `.gitignore` ayarları
-- [ ] Sabitler ve enum tanımları (magic string yok)
-- [ ] Temel klasör yapısı (Controllers, Services, Repositories, Models)
+### Phase 0: Setup (Day 0)
+- [ ] Project structure (Solution, projects)
+- [ ] Git repository, `.gitignore` configuration
+- [ ] Constants and enums (no magic strings)
+- [ ] Base folder structure (Controllers, Services, Repositories, Models)
 
-### Faz 1: Altyapı & Kimlik Doğrulama (Gün 1)
-- [ ] ASP.NET Core MVC projesi oluşturma
-- [ ] Entity Framework Core + SQL Server bağlantısı
-- [ ] ASP.NET Core Identity entegrasyonu
-- [ ] Rol tanımları (User, Manager, Admin)
+### Phase 1: Infrastructure & Authentication (Day 1)
+- [ ] ASP.NET Core MVC project setup
+- [ ] Entity Framework Core + SQL Server connection
+- [ ] ASP.NET Core Identity integration
+- [ ] Role definitions (User, Manager, Admin)
 - [ ] Login / Logout
-- [ ] Rol bazlı yetkilendirme (Authorize attribute)
-- [ ] Yetkisiz erişim sayfası (403 / Unauthorized)
-- [ ] Session/Cookie tabanlı authentication
+- [ ] Role-based authorization (Authorize attribute)
+- [ ] Unauthorized access page (403)
+- [ ] Session/Cookie-based authentication
 
-### Faz 2: Veri Modeli & Talep Modülü (Gün 2)
-- [ ] Entity modelleri (Code First):
-  - `User`, `Demand` (Talep), `DemandStatusHistory`, `DemandType`, `Priority`
-- [ ] Migration oluşturma ve veritabanı
-- [ ] Talep alanları:
-  - Talep No (otomatik), Başlık, Açıklama
-  - Talep Türü (Dropdown), Öncelik (Düşük/Orta/Yüksek)
-  - Oluşturan Kullanıcı, Oluşturma Tarihi
-  - Durum (Taslak, Onay Bekliyor, Onaylandı, Reddedildi)
-- [ ] Repository pattern / Unit of Work (opsiyonel)
-- [ ] Talep servis katmanı
-- [ ] İş kuralları:
-  - Kullanıcı sadece kendi taleplerini görür
-  - Yönetici tüm talepleri görür
-  - Onaylanan talep güncellenemez
+### Phase 2: Data Model & Request Module (Day 2)
+- [ ] Entity models (Code First):
+  - `User`, `Request`, `RequestStatusHistory`, `RequestType`, `Priority`
+- [ ] Migrations and database creation
+- [ ] Request fields:
+  - Request No (auto-generated), Title, Description
+  - Request Type (dropdown), Priority (Low/Medium/High)
+  - Created By, Created Date
+  - Status (Draft, Pending Approval, Approved, Rejected)
+- [ ] Repository pattern / Unit of Work (optional)
+- [ ] Request service layer
+- [ ] Business rules:
+  - Users see only their own requests
+  - Managers see all requests
+  - Approved requests cannot be updated
 
-### Faz 3: Talep CRUD & Onay Akışı (Gün 3)
-- [ ] Talep oluşturma formu
-- [ ] Talep düzenleme (durum kontrolü ile)
-- [ ] Talep listeleme sayfası
-- [ ] Talep detay sayfası
-- [ ] Onay / Reddet modal veya sayfası
-- [ ] Red durumunda açıklama zorunluluğu
-- [ ] Talep durum geçmişi (DemandStatusHistory) kaydı
+### Phase 3: Request CRUD & Approval Flow (Day 3)
+- [ ] Request creation form
+- [ ] Request edit (with status validation)
+- [ ] Request listing page
+- [ ] Request detail page
+- [ ] Approve / Reject modal or page
+- [ ] Rejection requires explanation
+- [ ] Request status history (RequestStatusHistory) tracking
 
-### Faz 4: Listeleme, Filtreleme & Dashboard (Gün 4)
-- [ ] Talep listesi filtreleri:
-  - Tarihe göre filtre
-  - Duruma göre filtre
-  - Başlıkta arama
-- [ ] Sayfalama (Paging)
-- [ ] Yönetici Dashboard:
-  - Toplam talep sayısı
-  - Bekleyen onay sayısı
-  - Son 5 talep
-- [ ] Kullanıcı Dashboard:
-  - Kendi taleplerinin durumu
-  - Son eklenen talepler
+### Phase 4: Listing, Filtering & Dashboard (Day 4)
+- [ ] Request list filters:
+  - Filter by date
+  - Filter by status
+  - Search by title
+- [ ] Pagination
+- [ ] Manager Dashboard:
+  - Total request count
+  - Pending approval count
+  - Last 5 requests
+- [ ] User Dashboard:
+  - Own request status summary
+  - Recently added requests
 
-### Faz 5: Admin Modülü & Son Rötuşlar (Gün 5)
-- [ ] Admin: Kullanıcı yönetimi (opsiyonel)
-- [ ] Admin: Rol yönetimi (opsiyonel)
-- [ ] UI/UX iyileştirmeleri (Bootstrap)
-- [ ] Hata yönetimi ve validasyonlar
-- [ ] README güncellemesi (kurulum adımları)
-- [ ] Seed data (test kullanıcıları, talep türleri)
-- [ ] Final test ve commit
+### Phase 5: Admin Module & Polish (Day 5)
+- [ ] Admin: User management (optional)
+- [ ] Admin: Role management (optional)
+- [ ] UI/UX improvements (Bootstrap)
+- [ ] Error handling and validation
+- [ ] README update (setup instructions)
+- [ ] Seed data (test users, request types)
+- [ ] Final testing and commits
 
 ---
 
-## 📐 Mimari Yaklaşım
+## 📐 Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -117,7 +116,7 @@ Kurum içi talep oluşturma, onaylama ve takip sistemi. Rol bazlı ASP.NET MVC u
                               ▼
 ┌─────────────────────────────────────────────────────────┐
 │                    Business Layer                         │
-│  (Services, DTOs, İş Kuralları)                           │
+│  (Services, DTOs, Business Rules)                         │
 └─────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -129,26 +128,26 @@ Kurum içi talep oluşturma, onaylama ve takip sistemi. Rol bazlı ASP.NET MVC u
 
 ---
 
-## 📄 Zorunlu Arayüzler
+## 📄 Required Screens
 
-| # | Ekran | Açıklama |
-|---|-------|----------|
-| 1 | Login | Kullanıcı girişi |
-| 2 | Ana Dashboard | Rol bazlı özet bilgiler |
-| 3 | Talep Oluşturma Formu | Yeni talep ekleme |
-| 4 | Talep Listeleme | Filtreleme, sayfalama |
-| 5 | Talep Detay | Tek talep görüntüleme |
-| 6 | Onay / Reddet | Modal veya ayrı sayfa |
-| 7 | Yetkisiz Erişim | 403 sayfası |
+| # | Screen | Description |
+|---|---------|-------------|
+| 1 | Login | User authentication |
+| 2 | Dashboard | Role-based overview |
+| 3 | Request Create Form | New request submission |
+| 4 | Request List | Filtering, pagination |
+| 5 | Request Detail | Single request view |
+| 6 | Approve / Reject | Modal or dedicated page |
+| 7 | Unauthorized | 403 page |
 
 ---
 
-## 📁 Önerilen Klasör Yapısı
+## 📁 Project Structure
 
 ```
 assignment/
 ├── src/
-│   └── TalepYonetim/
+│   └── RequestFlow/
 │       ├── Controllers/
 │       ├── Models/
 │       ├── Views/
@@ -165,24 +164,23 @@ assignment/
 
 ---
 
-## ✅ Teslim Kriterleri
+## ✅ Checklist
 
-- [ ] Çalışan proje (localde ayağa kalkmalı)
-- [ ] README: Kurulum adımları, mimari açıklama
-- [ ] Temiz kod: Magic string yok, sabitler, enum kullanımı
-- [ ] Anlamlı commit mesajları (Git)
-- [ ] GitHub linki teslim
+- [ ] Working project (runs locally)
+- [ ] README: Setup steps, architecture overview
+- [ ] Clean code: Constants, enums, no magic strings
+- [ ] Meaningful Git commit messages
 
 ---
 
-## 📌 Sabitler & Enum (Örnek)
+## 📌 Constants & Enums (Example)
 
 ```csharp
-// DemandStatus.cs
-public enum DemandStatus { Taslak, OnayBekliyor, Onaylandi, Reddedildi }
+// RequestStatus.cs
+public enum RequestStatus { Draft, PendingApproval, Approved, Rejected }
 
 // Priority.cs  
-public enum Priority { Dusuk, Orta, Yuksek }
+public enum Priority { Low, Medium, High }
 
 // RoleNames.cs
 public static class RoleNames { User, Manager, Admin }
@@ -190,4 +188,6 @@ public static class RoleNames { User, Manager, Admin }
 
 ---
 
-*Bu roadmap, yazılım mimarı tarafından belirlenen tasarıma göre yazılım mühendisi tarafından adım adım uygulanacaktır.*
+## 🚀 Setup (Coming Soon)
+
+*Installation steps will be added once the project is complete.*
