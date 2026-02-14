@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RequestFlow.Application.Interfaces;
+using RequestFlow.Application.Interfaces.Repositories;
 using RequestFlow.Persistence.Data;
 using RequestFlow.Persistence.Repositories;
 

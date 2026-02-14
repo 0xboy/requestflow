@@ -1,17 +1,33 @@
 using AutoMapper;
+using RequestFlow.Application.DTOs;
+using RequestFlow.Application.Features.Requests.Create;
+using RequestFlow.Application.Features.Dashboard;
+using RequestFlow.Application.Features.Requests.GetDetail;
+using RequestFlow.Application.Features.Requests.GetList;
+using RequestFlow.Application.Models;
+using RequestFlow.Application.Models.Filters;
+using RequestFlow.Application.Models.Requests;
+using RequestFlow.Application.Models.RequestTypes;
 
 namespace RequestFlow.Application.Mapping;
 
 /// <summary>
-/// AutoMapper profile for Application layer - Entity to DTO mappings.
-/// Add mappings when Domain entities and DTOs are defined.
+/// Application layer: Model -> DTO mappings, Command -> Model, Query -> Filter.
 /// </summary>
 public class ApplicationMappingProfile : Profile
 {
     public ApplicationMappingProfile()
     {
-        // TODO: Add mappings when entities and DTOs exist
-        // CreateMap<Request, RequestDto>();
-        // CreateMap<RequestDto, Request>();
+        CreateMap<RequestModel, RequestDto>().ReverseMap();
+        CreateMap<RequestListModel, RequestListDto>().ReverseMap();
+        CreateMap<RequestTypeModel, RequestTypeDto>().ReverseMap();
+        CreateMap<DashboardModel, DashboardDto>().ReverseMap();
+
+        CreateMap<CreateRequestCommand, CreateRequestModel>();
+
+        // Query -> Filter (generic base UserContextFilterModel üzerinden)
+        CreateMap<GetRequestListQuery, RequestListFilterModel>();
+        CreateMap<GetDashboardQuery, DashboardFilterModel>();
+        CreateMap<GetRequestDetailQuery, RequestDetailFilterModel>();
     }
 }

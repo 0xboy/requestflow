@@ -1,6 +1,6 @@
 using RequestFlow.Domain.Entities;
 
-namespace RequestFlow.Application.Interfaces;
+namespace RequestFlow.Application.Interfaces.Repositories;
 
 public interface IRequestTypeRepository
 {

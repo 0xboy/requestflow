@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using RequestFlow.Application.Interfaces;
+using RequestFlow.Application.Interfaces.Repositories;
 using RequestFlow.Domain.Entities;
 using RequestFlow.Persistence;
 

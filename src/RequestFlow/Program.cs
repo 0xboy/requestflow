@@ -12,7 +12,7 @@ builder.Services.AddShared();
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(RequestFlow.Infrastructure.Mapping.InfrastructureMappingProfile).Assembly);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

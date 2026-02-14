@@ -1,4 +1,4 @@
-namespace RequestFlow.Application.Interfaces;
+namespace RequestFlow.Application.Interfaces.Repositories;
 
 public interface IUnitOfWork
 {

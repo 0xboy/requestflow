@@ -2,9 +2,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\RequestFlow.Core\RequestFlow.Application\RequestFlow.Application.csproj" />
+    <ProjectReference Include="..\..\RequestFlow.Core\RequestFlow.Domain\RequestFlow.Domain.csproj" />
+    <ProjectReference Include="..\..\RequestFlow.Shared\RequestFlow.Shared\RequestFlow.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
   </ItemGroup>

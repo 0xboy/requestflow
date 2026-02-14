@@ -1,4 +1,4 @@
-using RequestFlow.Application.Interfaces;
+using RequestFlow.Application.Interfaces.Repositories;
 
 namespace RequestFlow.Persistence;
 

@@ -1,7 +1,7 @@
 using RequestFlow.Domain.Entities;
 using RequestFlow.Shared.Constants;
 
-namespace RequestFlow.Application.Interfaces;
+namespace RequestFlow.Application.Interfaces.Repositories;
 
 public interface IRequestRepository
 {
