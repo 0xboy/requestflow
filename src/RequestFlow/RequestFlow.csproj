@@ -4,11 +4,14 @@
     <ProjectReference Include="..\RequestFlow.Core\RequestFlow.Application\RequestFlow.Application.csproj" />
     <ProjectReference Include="..\RequestFlow.Infrastructure\RequestFlow.Persistence\RequestFlow.Persistence.csproj" />
     <ProjectReference Include="..\RequestFlow.Infrastructure\RequestFlow.Infrastructure\RequestFlow.Infrastructure.csproj" />
-    <ProjectReference Include="..\Core\RequestFlow.Shared\RequestFlow.Shared.csproj" />
+    <ProjectReference Include="..\RequestFlow.Shared\RequestFlow.Shared\RequestFlow.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
   </ItemGroup>
 

@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using RequestFlow.Application;
 using RequestFlow.Infrastructure;
 using RequestFlow.Persistence;
+using RequestFlow.Persistence.Data;
 using RequestFlow.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,16 +15,27 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddControllersWithViews();
 
-// TODO: Replace with ASP.NET Core Identity when implemented
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Error/Unauthorized";
-        options.ReturnUrlParameter = "returnUrl";
-    });
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<RequestFlowDbContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Error/Unauthorized";
+    options.ReturnUrlParameter = "returnUrl";
+});
 
 var app = builder.Build();
+
+// Seed database if empty
+await RequestFlow.Persistence.ServiceRegistration.SeedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
