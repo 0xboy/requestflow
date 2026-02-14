@@ -1,10 +1,10 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Talep sayısı sorgusu için filter: kullanıcı bağlamı + isteğe bağlı durum.
+/// Filter for request count query: user context + optional status.
 /// </summary>
 public record RequestCountFilterModel : UserContextFilterModel
 {
-    /// <summary>Filtrelenecek talep durumu (null = tümü)</summary>
+    /// <summary>Request status to filter by (null = all)</summary>
     public string? Status { get; init; }
 }

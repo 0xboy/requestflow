@@ -1,26 +1,26 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Request listesi filtreleme ve sayfalama parametreleri.
-/// Kullanıcı bağlamı (UserId, IsManager) + liste kriterleri + sayfalama.
+/// Request list filtering and paging parameters.
+/// User context (UserId, IsManager) + list criteria + paging.
 /// </summary>
 public record RequestListFilterModel : UserContextFilterModel
 {
-    /// <summary>Talep durumu (Draft, PendingApproval, Approved, Rejected)</summary>
+    /// <summary>Request status (Draft, PendingApproval, Approved, Rejected)</summary>
     public string? Status { get; init; }
 
-    /// <summary>Başlık, açıklama veya talep no üzerinde arama</summary>
+    /// <summary>Search on title, description or request number</summary>
     public string? Search { get; init; }
 
-    /// <summary>Oluşturulma tarihi - başlangıç</summary>
+    /// <summary>Created date - from</summary>
     public DateTime? FromDate { get; init; }
 
-    /// <summary>Oluşturulma tarihi - bitiş</summary>
+    /// <summary>Created date - to</summary>
     public DateTime? ToDate { get; init; }
 
-    /// <summary>Sayfa numarası (1 tabanlı)</summary>
+    /// <summary>Page number (1-based)</summary>
     public int Page { get; init; } = 1;
 
-    /// <summary>Sayfa başına kayıt sayısı</summary>
+    /// <summary>Page size</summary>
     public int PageSize { get; init; } = 10;
 }

@@ -3,7 +3,7 @@ using RequestFlow.Shared.Constants;
 namespace RequestFlow.Application.Models.Requests;
 
 /// <summary>
-/// Request listesi öğesi için application modeli. DTO'ya map edilir.
+/// Application model for a request list item. Mapped to DTO.
 /// </summary>
 public record RequestListModel
 {
@@ -13,4 +13,5 @@ public record RequestListModel
     public RequestStatus Status { get; init; }
     public Priority Priority { get; init; }
     public DateTime CreatedDate { get; init; }
+    public string CreatedByUserId { get; init; } = string.Empty;
 }

@@ -18,6 +18,7 @@ public class ApplicationMappingProfile : Profile
 {
     public ApplicationMappingProfile()
     {
+        CreateMap<RequestStatusHistoryItemModel, RequestStatusHistoryItemDto>();
         CreateMap<RequestModel, RequestDto>().ReverseMap();
         CreateMap<RequestListModel, RequestListDto>().ReverseMap();
         CreateMap<RequestTypeModel, RequestTypeDto>().ReverseMap();
@@ -25,7 +26,7 @@ public class ApplicationMappingProfile : Profile
 
         CreateMap<CreateRequestCommand, CreateRequestModel>();
 
-        // Query -> Filter (generic base UserContextFilterModel üzerinden)
+        // Query -> Filter (via generic base UserContextFilterModel)
         CreateMap<GetRequestListQuery, RequestListFilterModel>();
         CreateMap<GetDashboardQuery, DashboardFilterModel>();
         CreateMap<GetRequestDetailQuery, RequestDetailFilterModel>();

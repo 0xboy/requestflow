@@ -1,6 +1,6 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Dashboard verisi için filter; sadece kullanıcı bağlamı.
+/// Filter for dashboard data; user context only.
 /// </summary>
 public record DashboardFilterModel : UserContextFilterModel;

@@ -54,7 +54,7 @@ public static class DbSeeder
 
     private static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager, CancellationToken cancellationToken)
     {
-        // Kullanıcı (User rolü)
+        // User (User role)
         var userEmail = "user@test.com";
         if (await userManager.FindByEmailAsync(userEmail) == null)
         {
@@ -84,7 +84,7 @@ public static class DbSeeder
             await userManager.AddToRoleAsync(manager, RoleNames.Manager);
         }
 
-        // Admin (hem User hem Manager hem Admin)
+        // Admin (User, Manager and Admin roles)
         var adminEmail = "admin@test.com";
         if (await userManager.FindByEmailAsync(adminEmail) == null)
         {

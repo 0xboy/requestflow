@@ -24,6 +24,7 @@ public class RequestRepository : IRequestRepository
     {
         return await _context.Requests
             .Include(r => r.RequestType)
+            .Include(r => r.StatusHistory.OrderByDescending(h => h.ChangedDate))
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 

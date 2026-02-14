@@ -10,4 +10,5 @@ public record RequestListDto
     public RequestStatus Status { get; init; }
     public Priority Priority { get; init; }
     public DateTime CreatedDate { get; init; }
+    public string CreatedByUserId { get; init; } = string.Empty;
 }

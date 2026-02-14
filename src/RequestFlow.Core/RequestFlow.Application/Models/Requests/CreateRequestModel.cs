@@ -3,7 +3,7 @@ using RequestFlow.Shared.Constants;
 namespace RequestFlow.Application.Models.Requests;
 
 /// <summary>
-/// Yeni talep oluşturma için application modeli. Servis bunu entity'ye map eder.
+/// Application model for creating a new request. Service maps it to entity.
 /// </summary>
 public record CreateRequestModel
 {

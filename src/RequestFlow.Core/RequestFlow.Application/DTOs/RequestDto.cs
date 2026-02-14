@@ -16,4 +16,6 @@ public record RequestDto
     public DateTime CreatedDate { get; init; }
     public bool CanEdit { get; init; }
     public bool CanApprove { get; init; }
+    public bool CanSubmitForApproval { get; init; }
+    public IReadOnlyList<RequestStatusHistoryItemDto> StatusHistory { get; init; } = Array.Empty<RequestStatusHistoryItemDto>();
 }

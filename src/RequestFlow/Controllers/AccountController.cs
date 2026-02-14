@@ -6,7 +6,7 @@ using RequestFlow.Persistence.Data;
 
 namespace RequestFlow.Controllers;
 
-public class AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager) : Controller
+public class AccountController(SignInManager<ApplicationUser> signInManager) : Controller
 {
     [HttpGet]
     [AllowAnonymous]
@@ -30,7 +30,7 @@ public class AccountController(SignInManager<ApplicationUser> signInManager, Use
 
         if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, "Geçersiz e-posta veya şifre.");
+            ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(model);
         }
 

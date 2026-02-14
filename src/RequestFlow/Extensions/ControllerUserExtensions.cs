@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace RequestFlow.Extensions;
 
 /// <summary>
-/// Controller'da mevcut kullanıcı bilgisini almak için.
+/// Get current user info in the controller.
 /// </summary>
 public static class ControllerUserExtensions
 {
@@ -13,4 +13,7 @@ public static class ControllerUserExtensions
 
     public static bool IsManager(this ControllerBase controller)
         => controller.User.IsInRole("Manager");
+
+    public static bool IsAdmin(this ControllerBase controller)
+        => controller.User.IsInRole("Admin");
 }

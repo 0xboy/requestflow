@@ -1,10 +1,10 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Tek talep detayı için filter: kullanıcı bağlamı + talep id.
+/// Filter for single request detail: user context + request id.
 /// </summary>
 public record RequestDetailFilterModel : UserContextFilterModel
 {
-    /// <summary>Talep id</summary>
+    /// <summary>Request id</summary>
     public int Id { get; init; }
 }

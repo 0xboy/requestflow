@@ -11,4 +11,7 @@ public class ApproveRejectViewModel
     [StringLength(500)]
     [Display(Name = "Rejection reason (required when rejecting)")]
     public string? RejectionReason { get; set; }
+
+    /// <summary>Where to redirect after action: "List" or "Details"</summary>
+    public string? ReturnTo { get; set; }
 }

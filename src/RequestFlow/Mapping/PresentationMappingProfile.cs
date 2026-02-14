@@ -14,13 +14,18 @@ public class PresentationMappingProfile : Profile
 {
     public PresentationMappingProfile()
     {
-        // Application filter → MediatR query (controller'da UserId/IsManager doldurulur)
+        // Application filter → MediatR query (UserId/IsManager set in controller)
         CreateMap<RequestListFilterModel, GetRequestListQuery>();
 
-        // Create: ViewModel → Command (UserId controller'da eklenir)
+        // Create: ViewModel → Command (UserId added in controller with { UserId = ... })
+        // Record has only positional constructor; ConstructUsing tells AutoMapper how to build it.
         CreateMap<RequestCreateViewModel, CreateRequestCommand>()
-            .ForMember(d => d.Priority, o => o.MapFrom(s => ParsePriority(s.Priority)))
-            .ForMember(d => d.UserId, o => o.Ignore());
+            .ConstructUsing(s => new CreateRequestCommand(
+                s.Title,
+                s.Description,
+                s.RequestTypeId,
+                ParsePriority(s.Priority),
+                string.Empty));
     }
 
     private static Priority ParsePriority(string? value)

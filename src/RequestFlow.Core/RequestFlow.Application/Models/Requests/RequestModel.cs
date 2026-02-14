@@ -3,7 +3,7 @@ using RequestFlow.Shared.Constants;
 namespace RequestFlow.Application.Models.Requests;
 
 /// <summary>
-/// Request detayı için application katmanı modeli. DTO'ya map edilir.
+/// Application layer model for request detail. Mapped to DTO.
 /// </summary>
 public record RequestModel
 {
@@ -19,4 +19,6 @@ public record RequestModel
     public DateTime CreatedDate { get; init; }
     public bool CanEdit { get; init; }
     public bool CanApprove { get; init; }
+    public bool CanSubmitForApproval { get; init; }
+    public IReadOnlyList<RequestStatusHistoryItemModel> StatusHistory { get; init; } = Array.Empty<RequestStatusHistoryItemModel>();
 }

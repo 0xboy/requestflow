@@ -1,31 +1,91 @@
 @model List<RequestFlow.Models.RequestListViewModel>
 @{
     ViewData["Title"] = "Request List";
+    var requestTypes = ViewBag.RequestTypes as Microsoft.AspNetCore.Mvc.Rendering.SelectList ?? new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+    var openCreate = ViewBag.OpenCreate as bool? ?? false;
+    var filter = ViewBag.Filter as RequestFlow.Application.Models.Filters.RequestListFilterModel;
+    var search = filter?.Search ?? "";
+    var status = filter?.Status ?? "";
+    var fromDate = filter?.FromDate;
+    var toDate = filter?.ToDate;
+    var currentUserId = ViewBag.CurrentUserId as string ?? "";
+    var isManager = ViewBag.IsManager as bool? ?? false;
+}
+@if (TempData["RejectError"] != null && TempData["RejectRequestId"] != null)
+{
+    <input type="hidden" id="reopenRejectId" value="@TempData["RejectRequestId"]" />
+    <input type="hidden" id="reopenRejectNo" value="@TempData["RejectRequestNo"]" />
+    <input type="hidden" id="reopenRejectTitle" value="@TempData["RejectTitle"]" />
+    <input type="hidden" id="reopenRejectReturnTo" value="@TempData["RejectReturnTo"]" />
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<div class="mb-3">
-    <a asp-action="Create" class="btn btn-primary">Create New Request</a>
-</div>
-
-<form asp-action="Index" method="get" class="row g-3 mb-3">
+<form asp-action="Index" method="get" class="row g-3 mb-3 align-items-center">
     <div class="col-md-2">
-        <input type="text" name="search" class="form-control" placeholder="Search by title" />
+        <input type="text" name="search" class="form-control" placeholder="Search by title" value="@search" />
     </div>
     <div class="col-md-2">
-        <select name="status" class="form-select" asp-items="@(new SelectList(new[] { "", "Draft", "PendingApproval", "Approved", "Rejected" }, ""))"></select>
+        @{
+            var statusList = new SelectList(new[] { new { Value = "", Text = "" }, new { Value = "Draft", Text = "Draft" }, new { Value = "PendingApproval", Text = "PendingApproval" }, new { Value = "Approved", Text = "Approved" }, new { Value = "Rejected", Text = "Rejected" } }, "Value", "Text", status);
+        }
+        <select name="status" class="form-select" asp-items="statusList"></select>
     </div>
     <div class="col-md-2">
-        <input type="date" name="fromDate" class="form-control" placeholder="From" />
+        <input type="date" name="fromDate" class="form-control" placeholder="From" value="@(fromDate?.ToString("yyyy-MM-dd"))" />
     </div>
     <div class="col-md-2">
-        <input type="date" name="toDate" class="form-control" placeholder="To" />
+        <input type="date" name="toDate" class="form-control" placeholder="To" value="@(toDate?.ToString("yyyy-MM-dd"))" />
     </div>
     <div class="col-md-2">
         <button type="submit" class="btn btn-secondary">Filter</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+    <div class="col-md-2 ms-auto">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRequestModal">Create New Request</button>
     </div>
 </form>
+
+<div class="modal fade" id="createRequestModal" tabindex="-1" aria-labelledby="createRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRequestModalLabel">Create Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Title</label>
+                        <input type="text" name="Title" id="Title" class="form-control" required maxlength="200" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <textarea name="Description" id="Description" class="form-control" rows="4" maxlength="2000"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="RequestTypeId" class="form-label">Request Type</label>
+                        <select name="RequestTypeId" id="RequestTypeId" class="form-select" asp-items="@requestTypes" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Priority" class="form-label">Priority</label>
+                        <select name="Priority" id="Priority" class="form-select">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -34,6 +94,7 @@
             <th>Title</th>
             <th>Status</th>
             <th>Priority</th>
+            <th>Created By</th>
             <th>Created Date</th>
             <th></th>
         </tr>
@@ -44,13 +105,141 @@
             <tr>
                 <td>@item.RequestNo</td>
                 <td>@item.Title</td>
-                <td><span class="badge bg-secondary">@item.Status</span></td>
-                <td>@item.Priority</td>
+                <td><partial name="_StatusBadge" model="item.Status" /></td>
+                <td><partial name="_PriorityBadge" model="item.Priority" /></td>
+                <td>@(string.IsNullOrEmpty(item.CreatedByDisplayName) ? item.CreatedByUserId : item.CreatedByDisplayName)</td>
                 <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                    @if (item.Status == "Draft" && !string.IsNullOrEmpty(currentUserId) && item.CreatedByUserId == currentUserId)
+                    {
+                        <form asp-action="SubmitForApproval" asp-route-id="@item.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success">Submit for Approval</button>
+                        </form>
+                    }
+                    @if (item.Status == "PendingApproval" && isManager)
+                    {
+                        <button type="button" class="btn btn-sm btn-success btn-approve" data-request-id="@item.Id" data-request-no="@item.RequestNo" data-request-title="@item.Title" data-return-to="List">Approve</button>
+                        <button type="button" class="btn btn-sm btn-danger btn-reject" data-request-id="@item.Id" data-request-no="@item.RequestNo" data-request-title="@item.Title" data-return-to="List">Reject</button>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveModalLabel">Approve Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="approveForm" asp-action="Approve" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="RequestId" id="approveRequestId" />
+                <input type="hidden" name="RequestNo" id="approveRequestNo" />
+                <input type="hidden" name="Title" id="approveTitle" />
+                <input type="hidden" name="ReturnTo" id="approveReturnTo" value="List" />
+                <div class="modal-body">
+                    <p>Are you sure you want to approve request <strong id="approveDisplayNo"></strong> - <span id="approveDisplayTitle"></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="rejectForm" asp-action="Reject" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="RequestId" id="rejectRequestId" />
+                <input type="hidden" name="RequestNo" id="rejectRequestNo" />
+                <input type="hidden" name="Title" id="rejectTitle" />
+                <input type="hidden" name="ReturnTo" id="rejectReturnTo" value="List" />
+                <div class="modal-body">
+                    <p>Rejecting request <strong id="rejectDisplayNo"></strong> - <span id="rejectDisplayTitle"></span></p>
+                    <div class="mb-3">
+                        <label for="rejectReason" class="form-label">Rejection reason (required)</label>
+                        <textarea name="RejectionReason" id="rejectReason" class="form-control" rows="3" required maxlength="500"></textarea>
+                        @if (TempData["RejectError"] != null)
+                        {
+                            <span class="text-danger">@TempData["RejectError"]</span>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (openCreate)
+            {
+                <text>var createModal = new bootstrap.Modal(document.getElementById('createRequestModal'));
+                createModal.show();</text>
+            }
+            var approveModalEl = document.getElementById('approveModal');
+            var rejectModalEl = document.getElementById('rejectModal');
+            document.querySelectorAll('.btn-approve').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.getElementById('approveRequestId').value = btn.getAttribute('data-request-id');
+                    document.getElementById('approveRequestNo').value = btn.getAttribute('data-request-no');
+                    document.getElementById('approveTitle').value = btn.getAttribute('data-request-title');
+                    document.getElementById('approveReturnTo').value = btn.getAttribute('data-return-to') || 'List';
+                    document.getElementById('approveDisplayNo').textContent = btn.getAttribute('data-request-no');
+                    document.getElementById('approveDisplayTitle').textContent = btn.getAttribute('data-request-title');
+                    new bootstrap.Modal(approveModalEl).show();
+                });
+            });
+            document.querySelectorAll('.btn-reject').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.getElementById('rejectRequestId').value = btn.getAttribute('data-request-id');
+                    document.getElementById('rejectRequestNo').value = btn.getAttribute('data-request-no');
+                    document.getElementById('rejectTitle').value = btn.getAttribute('data-request-title');
+                    document.getElementById('rejectReturnTo').value = btn.getAttribute('data-return-to') || 'List';
+                    document.getElementById('rejectDisplayNo').textContent = btn.getAttribute('data-request-no');
+                    document.getElementById('rejectDisplayTitle').textContent = btn.getAttribute('data-request-title');
+                    document.getElementById('rejectReason').value = '';
+                    new bootstrap.Modal(rejectModalEl).show();
+                });
+            });
+            @if (TempData["RejectError"] != null && TempData["RejectRequestId"] != null)
+            {
+                <text>
+            (function () {
+                var reopenId = document.getElementById('reopenRejectId');
+                if (reopenId) {
+                    var id = reopenId.value;
+                    var no = document.getElementById('reopenRejectNo').value;
+                    var title = document.getElementById('reopenRejectTitle').value;
+                    document.getElementById('rejectRequestId').value = id;
+                    document.getElementById('rejectRequestNo').value = no;
+                    document.getElementById('rejectTitle').value = title;
+                    document.getElementById('rejectReturnTo').value = document.getElementById('reopenRejectReturnTo').value || 'List';
+                    document.getElementById('rejectDisplayNo').textContent = no;
+                    document.getElementById('rejectDisplayTitle').textContent = title;
+                    new bootstrap.Modal(rejectModalEl).show();
+                }
+            })();
+                </text>
+            }
+        });
+    </script>
+}

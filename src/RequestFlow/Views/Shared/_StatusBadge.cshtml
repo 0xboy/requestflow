@@ -1,0 +1,12 @@
+@model string
+@{
+    var css = Model switch
+    {
+        "Draft" => "bg-secondary",
+        "PendingApproval" => "bg-warning text-dark",
+        "Approved" => "bg-success",
+        "Rejected" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+<span class="badge @css">@Model</span>

@@ -1,7 +1,7 @@
 namespace RequestFlow.Application.Models.RequestTypes;
 
 /// <summary>
-/// Request tipi için application modeli. DTO'ya map edilir.
+/// Application model for request type. Mapped to DTO.
 /// </summary>
 public record RequestTypeModel
 {

@@ -13,10 +13,12 @@ public class InfrastructureMappingProfile : Profile
 {
     public InfrastructureMappingProfile()
     {
+        CreateMap<RequestStatusHistory, RequestStatusHistoryItemModel>();
         CreateMap<Request, RequestModel>()
             .ForMember(d => d.RequestTypeName, o => o.MapFrom(s => s.RequestType.Name))
             .ForMember(d => d.CanEdit, o => o.Ignore())
-            .ForMember(d => d.CanApprove, o => o.Ignore());
+            .ForMember(d => d.CanApprove, o => o.Ignore())
+            .ForMember(d => d.CanSubmitForApproval, o => o.Ignore());
 
         CreateMap<Request, RequestListModel>();
 
@@ -38,9 +40,10 @@ public class InfrastructureMappingProfile : Profile
             .ForMember(d => d.CreatedDate, o => o.Ignore())
             .ForMember(d => d.ModifiedDate, o => o.Ignore())
             .ForMember(d => d.RequestType, o => o.Ignore())
-            .ForMember(d => d.StatusHistory, o => o.Ignore());
+            .ForMember(d => d.StatusHistory, o => o.Ignore())
+            .ForMember(d => d.CreatedByUserId, o => o.MapFrom(s => s.UserId));
 
-        // Repo/servisten gelen veriyi model'e map et; elle new DashboardModel yazmamak için
+        // Map repo/service output to DashboardModel (avoids manual new DashboardModel)
         CreateMap<DashboardData, DashboardModel>();
     }
 }

@@ -6,7 +6,7 @@ using RequestFlow.Application.Models.RequestTypes;
 namespace RequestFlow.Application.Interfaces.Services;
 
 /// <summary>
-/// Request ile ilgili okuma/yazma işlemleri. Model alır/döner; entity Application'a sızmaz.
+/// Request read/write operations. Takes/returns models; entity does not leak into Application.
 /// </summary>
 public interface IRequestService
 {
@@ -31,4 +31,10 @@ public interface IRequestService
     Task<DashboardModel> GetDashboardDataAsync(
         DashboardFilterModel filter,
         CancellationToken cancellationToken = default);
+
+    Task<bool> SubmitForApprovalAsync(int requestId, string userId, CancellationToken cancellationToken = default);
+
+    Task<bool> ApproveRequestAsync(int requestId, string userId, CancellationToken cancellationToken = default);
+
+    Task<bool> RejectRequestAsync(int requestId, string userId, string rejectionReason, CancellationToken cancellationToken = default);
 }

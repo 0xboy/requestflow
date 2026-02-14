@@ -6,7 +6,7 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-6 col-md-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Total Requests</h5>
@@ -16,16 +16,37 @@
     </div>
     @if (Model.IsManager)
     {
-        <div class="col-md-4">
+        <div class="col-6 col-md-3">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body position-relative">
+                    @if (Model.PendingApprovalCount > 0)
+                    {
+                        <a asp-controller="Request" asp-action="Index" asp-route-status="PendingApproval" class="btn btn-sm btn-primary position-absolute top-0 end-0 mt-2 me-2">View</a>
+                    }
                     <h5 class="card-title">Pending Approval</h5>
                     <p class="card-text display-6">@Model.PendingApprovalCount</p>
-                    <a asp-controller="Request" asp-action="Index" asp-route-status="PendingApproval" class="btn btn-sm btn-primary">View</a>
                 </div>
             </div>
         </div>
     }
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body position-relative">
+                <a asp-controller="Request" asp-action="Index" asp-route-status="Approved" class="btn btn-sm btn-outline-success position-absolute top-0 end-0 mt-2 me-2">View</a>
+                <h5 class="card-title">Approved</h5>
+                <p class="card-text display-6 text-success">@Model.ApprovedCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body position-relative">
+                <a asp-controller="Request" asp-action="Index" asp-route-status="Rejected" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 mt-2 me-2">View</a>
+                <h5 class="card-title">Rejected</h5>
+                <p class="card-text display-6 text-danger">@Model.RejectedCount</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <h4>Recent Requests</h4>
@@ -37,6 +58,7 @@
                 <th>Request No</th>
                 <th>Title</th>
                 <th>Status</th>
+                <th>Created By</th>
                 <th>Created</th>
                 <th></th>
             </tr>
@@ -47,7 +69,8 @@
                 <tr>
                     <td>@item.RequestNo</td>
                     <td>@item.Title</td>
-                    <td><span class="badge bg-secondary">@item.Status</span></td>
+                    <td><partial name="_StatusBadge" model="item.Status" /></td>
+                    <td>@(string.IsNullOrEmpty(item.CreatedByDisplayName) ? item.CreatedByUserId : item.CreatedByDisplayName)</td>
                     <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
                     <td><a asp-controller="Request" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Details</a></td>
                 </tr>
@@ -58,5 +81,5 @@
 else
 {
     <p class="text-muted">No requests yet.</p>
-    <a asp-controller="Request" asp-action="Create" class="btn btn-primary">Create your first request</a>
+    <a asp-controller="Request" asp-action="Index" asp-route-openCreate="true" class="btn btn-primary">Create your first request</a>
 }

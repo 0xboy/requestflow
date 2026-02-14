@@ -7,7 +7,7 @@ public class ErrorController() : Controller
 {
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Unauthorized()
+    public new IActionResult Unauthorized()
     {
         return View();
     }

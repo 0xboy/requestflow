@@ -1,14 +1,14 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Tüm sorgularda ortak: kimlik ve yetki bilgisi (hangi kullanıcı, manager mı).
-/// List, dashboard, detail vb. filter modelleri bu tabanı kullanabilir.
+/// Shared across queries: identity and role (which user, is manager).
+/// List, dashboard, detail etc. filter models can use this base.
 /// </summary>
 public record UserContextFilterModel
 {
-    /// <summary>İstek yapan kullanıcı id</summary>
+    /// <summary>Requesting user id</summary>
     public string? UserId { get; init; }
 
-    /// <summary>Kullanıcı manager rolünde mi (onay yetkisi var mı)</summary>
+    /// <summary>Whether the user has the Manager role (approval permission)</summary>
     public bool IsManager { get; init; }
 }

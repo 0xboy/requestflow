@@ -1,0 +1,26 @@
+@model List<RequestFlow.Models.UserListViewModel>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Display Name</th>
+            <th>Roles</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.DisplayName</td>
+                <td><span class="badge bg-secondary">@user.Roles</span></td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,13 +1,13 @@
 namespace RequestFlow.Application.Models.Filters;
 
 /// <summary>
-/// Sayfalama parametreleri. Diğer filtre modelleri bu değerleri içerebilir veya bu modeli kullanabilir.
+/// Paging parameters. Other filter models may include these or use this model.
 /// </summary>
 public record PagingFilterModel
 {
-    /// <summary>Sayfa numarası (1 tabanlı)</summary>
+    /// <summary>Page number (1-based)</summary>
     public int Page { get; init; } = 1;
 
-    /// <summary>Sayfa başına kayıt sayısı</summary>
+    /// <summary>Page size</summary>
     public int PageSize { get; init; } = 10;
 }

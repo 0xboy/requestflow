@@ -44,9 +44,11 @@ public class RequestService(
         if (entity == null) return null;
 
         var model = mapper.Map<RequestModel>(entity);
-        var canEdit = entity.CreatedByUserId == filter.UserId && entity.Status == RequestStatus.Draft;
+        var isCreator = entity.CreatedByUserId == filter.UserId;
+        var canEdit = isCreator && (entity.Status == RequestStatus.Draft || entity.Status == RequestStatus.Rejected);
         var canApprove = filter.IsManager && entity.Status == RequestStatus.PendingApproval;
-        return model with { CanEdit = canEdit, CanApprove = canApprove };
+        var canSubmitForApproval = isCreator && entity.Status == RequestStatus.Draft;
+        return model with { CanEdit = canEdit, CanApprove = canApprove, CanSubmitForApproval = canSubmitForApproval };
     }
 
     public Task<int> GetCountAsync(
@@ -85,11 +87,80 @@ public class RequestService(
     {
         var totalCount = await GetCountAsync(new RequestCountFilterModel { UserId = filter.UserId, IsManager = filter.IsManager, Status = null }, cancellationToken);
         var pendingCount = await GetCountAsync(new RequestCountFilterModel { UserId = filter.UserId, IsManager = filter.IsManager, Status = RequestStatus.PendingApproval.ToString() }, cancellationToken);
+        var approvedCount = await GetCountAsync(new RequestCountFilterModel { UserId = filter.UserId, IsManager = filter.IsManager, Status = RequestStatus.Approved.ToString() }, cancellationToken);
+        var rejectedCount = await GetCountAsync(new RequestCountFilterModel { UserId = filter.UserId, IsManager = filter.IsManager, Status = RequestStatus.Rejected.ToString() }, cancellationToken);
         var recentEntities = await requestRepository.GetListAsync(
             filter.UserId, filter.IsManager, null, null, null, null, 1, 5, cancellationToken);
         var recent = mapper.Map<IReadOnlyList<RequestListModel>>(recentEntities);
 
-        var data = new DashboardData(totalCount, pendingCount, recent, filter.IsManager);
+        var data = new DashboardData(totalCount, pendingCount, approvedCount, rejectedCount, recent, filter.IsManager);
         return mapper.Map<DashboardModel>(data);
+    }
+
+    public async Task<bool> SubmitForApprovalAsync(int requestId, string userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await requestRepository.GetByIdAsync(requestId, cancellationToken);
+        if (entity == null || entity.Status != RequestStatus.Draft || entity.CreatedByUserId != userId)
+            return false;
+
+        var fromStatus = entity.Status;
+        entity.Status = RequestStatus.PendingApproval;
+        entity.ModifiedDate = DateTime.UtcNow;
+        await requestRepository.UpdateAsync(entity, cancellationToken);
+        await requestRepository.AddStatusHistoryAsync(new RequestStatusHistory
+        {
+            RequestId = requestId,
+            FromStatus = fromStatus,
+            ToStatus = RequestStatus.PendingApproval,
+            ChangedByUserId = userId,
+            ChangedDate = DateTime.UtcNow
+        }, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> ApproveRequestAsync(int requestId, string userId, CancellationToken cancellationToken = default)
+    {
+        var entity = await requestRepository.GetByIdAsync(requestId, cancellationToken);
+        if (entity == null || entity.Status != RequestStatus.PendingApproval)
+            return false;
+
+        var fromStatus = entity.Status;
+        entity.Status = RequestStatus.Approved;
+        entity.ModifiedDate = DateTime.UtcNow;
+        await requestRepository.UpdateAsync(entity, cancellationToken);
+        await requestRepository.AddStatusHistoryAsync(new RequestStatusHistory
+        {
+            RequestId = requestId,
+            FromStatus = fromStatus,
+            ToStatus = RequestStatus.Approved,
+            ChangedByUserId = userId,
+            ChangedDate = DateTime.UtcNow
+        }, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> RejectRequestAsync(int requestId, string userId, string rejectionReason, CancellationToken cancellationToken = default)
+    {
+        var entity = await requestRepository.GetByIdAsync(requestId, cancellationToken);
+        if (entity == null || entity.Status != RequestStatus.PendingApproval)
+            return false;
+
+        var fromStatus = entity.Status;
+        entity.Status = RequestStatus.Rejected;
+        entity.ModifiedDate = DateTime.UtcNow;
+        await requestRepository.UpdateAsync(entity, cancellationToken);
+        await requestRepository.AddStatusHistoryAsync(new RequestStatusHistory
+        {
+            RequestId = requestId,
+            FromStatus = fromStatus,
+            ToStatus = RequestStatus.Rejected,
+            Comment = rejectionReason,
+            ChangedByUserId = userId,
+            ChangedDate = DateTime.UtcNow
+        }, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

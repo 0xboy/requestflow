@@ -3,11 +3,13 @@ using RequestFlow.Application.Models.Requests;
 namespace RequestFlow.Application.Models;
 
 /// <summary>
-/// Dashboard için toplanan ham veri. Repo + servis çıktıları bunu doldurur,
-/// mapper ile DashboardModel'e map edilir (elle new DashboardModel yazmamak için).
+/// Raw data aggregated for dashboard. Repo + service output fills it;
+/// mapped to DashboardModel via mapper (avoids manual new DashboardModel).
 /// </summary>
 public record DashboardData(
     int TotalRequestCount,
     int PendingApprovalCount,
+    int ApprovedCount,
+    int RejectedCount,
     IReadOnlyList<RequestListModel> RecentRequests,
     bool IsManager);

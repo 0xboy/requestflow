@@ -1,0 +1,5 @@
+@model string?
+@if (!string.IsNullOrEmpty(Model))
+{
+    <span class="navbar-text text-muted me-2">@Model</span>
+}

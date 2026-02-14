@@ -13,4 +13,6 @@ public class RequestDetailViewModel
     public DateTime CreatedDate { get; set; }
     public bool CanEdit { get; set; }
     public bool CanApprove { get; set; }
+    public bool CanSubmitForApproval { get; set; }
+    public List<StatusHistoryItemViewModel> StatusHistory { get; set; } = new();
 }
