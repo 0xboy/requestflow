@@ -19,7 +19,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="RequestTypeId" class="form-label"></label>
-        <select asp-for="RequestTypeId" class="form-select" asp-items="@(new SelectList(new[] { new { Id = 1, Name = "General" } }, "Id", "Name"))"></select>
+        <select asp-for="RequestTypeId" class="form-select" asp-items="@ViewBag.RequestTypes"></select>
     </div>
     <div class="mb-3">
         <label asp-for="Priority" class="form-label"></label>

@@ -6,17 +6,8 @@ using RequestFlow.Persistence.Data;
 
 namespace RequestFlow.Controllers;
 
-public class AccountController : Controller
+public class AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager) : Controller
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-    }
-
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null)
@@ -35,7 +26,7 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+        var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
         if (!result.Succeeded)
         {
@@ -50,7 +41,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)
     {
-        await _signInManager.SignOutAsync();
+        await signInManager.SignOutAsync();
         return RedirectToAction(nameof(Login));
     }
 }

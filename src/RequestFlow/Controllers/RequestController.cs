@@ -1,32 +1,38 @@
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using RequestFlow.Application.DTOs;
+using RequestFlow.Application.Features.Requests.Create;
+using RequestFlow.Application.Features.Requests.GetDetail;
+using RequestFlow.Application.Features.Requests.GetList;
+using RequestFlow.Application.Features.Requests.GetTypes;
+using RequestFlow.Application.Models.Filters;
+using RequestFlow.Extensions;
 using RequestFlow.Models;
 
 namespace RequestFlow.Controllers;
 
 [Authorize]
-public class RequestController : Controller
+public class RequestController(IMediator mediator, IMapper mapper) : Controller
 {
-    // TODO: Inject IMediator when request features are implemented
-    // private readonly IMediator _mediator;
-
     [HttpGet]
-    public async Task<IActionResult> Index(string? status, string? search, DateTime? fromDate, DateTime? toDate, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index([FromQuery] RequestListFilterModel filter, CancellationToken cancellationToken = default)
     {
-        // TODO: Send GetRequestListQuery via MediatR
-        // var result = await _mediator.Send(new GetRequestListQuery { Status = status, Search = search, FromDate = fromDate, ToDate = toDate, Page = page }, cancellationToken);
-
-        var requests = new List<RequestListViewModel>(); // Placeholder - replace with result
+        var filterWithUser = filter with { UserId = this.GetUserId(), IsManager = this.IsManager() };
+        var query = mapper.Map<GetRequestListQuery>(filterWithUser);
+        var result = await mediator.Send(query, cancellationToken);
+        var requests = mapper.Map<List<RequestListViewModel>>(result.Items);
         return View(requests);
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create(CancellationToken cancellationToken = default)
     {
-        return View(new RequestCreateViewModel
-        {
-            // TODO: Load RequestTypes from GetRequestTypesQuery
-        });
+        var types = await mediator.Send(new GetRequestTypesQuery(), cancellationToken);
+        ViewBag.RequestTypes = new SelectList(types, nameof(RequestTypeDto.Id), nameof(RequestTypeDto.Name));
+        return View(new RequestCreateViewModel());
     }
 
     [HttpPost]
@@ -36,21 +42,21 @@ public class RequestController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        // TODO: Send CreateRequestCommand via MediatR
-        // var result = await _mediator.Send(new CreateRequestCommand(model.Title, model.Description, model.RequestTypeId, model.Priority), cancellationToken);
-        // return RedirectToAction(nameof(Details), new { id = result.Id });
-
-        return RedirectToAction(nameof(Index));
+        var cmd = mapper.Map<CreateRequestCommand>(model) with { UserId = this.GetUserId() ?? string.Empty };
+        var id = await mediator.Send(cmd, cancellationToken);
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpGet]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
     {
-        // TODO: Send GetRequestDetailQuery via MediatR
-        // var result = await _mediator.Send(new GetRequestDetailQuery(id), cancellationToken);
-        // if (result == null) return NotFound();
+        var userId = this.GetUserId();
+        var isManager = this.IsManager();
+        var result = await mediator.Send(new GetRequestDetailQuery(id, userId ?? string.Empty, isManager), cancellationToken);
+        if (result == null)
+            return NotFound();
 
-        var model = new RequestDetailViewModel { Id = id, RequestNo = $"REQ-{id:D5}", Title = "Sample", Status = "Draft", CanEdit = true, CanApprove = false };
+        var model = mapper.Map<RequestDetailViewModel>(result);
         return View(model);
     }
 
@@ -58,7 +64,7 @@ public class RequestController : Controller
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken = default)
     {
         // TODO: Send GetRequestForEditQuery via MediatR
-        // var result = await _mediator.Send(new GetRequestForEditQuery(id), cancellationToken);
+        // var result = await mediator.Send(new GetRequestForEditQuery(id), cancellationToken);
         // if (result == null) return NotFound();
 
         var model = new RequestEditViewModel { Id = id, Title = "Sample", Status = "Draft" };
@@ -73,7 +79,7 @@ public class RequestController : Controller
             return View(model);
 
         // TODO: Send UpdateRequestCommand via MediatR
-        // await _mediator.Send(new UpdateRequestCommand(model.Id, model.Title, model.Description, model.RequestTypeId, model.Priority), cancellationToken);
+        // await mediator.Send(new UpdateRequestCommand(model.Id, model.Title, model.Description, model.RequestTypeId, model.Priority), cancellationToken);
 
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }
@@ -94,7 +100,7 @@ public class RequestController : Controller
     public async Task<IActionResult> ApproveConfirm(ApproveRejectViewModel model, CancellationToken cancellationToken = default)
     {
         // TODO: Send ApproveRequestCommand via MediatR
-        // await _mediator.Send(new ApproveRequestCommand(model.RequestId), cancellationToken);
+        // await mediator.Send(new ApproveRequestCommand(model.RequestId), cancellationToken);
 
         return RedirectToAction(nameof(Details), new { id = model.RequestId });
     }
@@ -120,7 +126,7 @@ public class RequestController : Controller
         }
 
         // TODO: Send RejectRequestCommand via MediatR
-        // await _mediator.Send(new RejectRequestCommand(model.RequestId, model.RejectionReason!), cancellationToken);
+        // await mediator.Send(new RejectRequestCommand(model.RequestId, model.RejectionReason!), cancellationToken);
 
         return RedirectToAction(nameof(Details), new { id = model.RequestId });
     }

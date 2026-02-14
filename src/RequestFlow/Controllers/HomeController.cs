@@ -1,29 +1,23 @@
 using System.Diagnostics;
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RequestFlow.Application.Features.Dashboard;
+using RequestFlow.Extensions;
 using RequestFlow.Models;
 
 namespace RequestFlow.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ILogger<HomeController> logger, IMediator mediator, IMapper mapper) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    // TODO: Inject IMediator when dashboard feature is implemented
-    // private readonly IMediator _mediator;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     [Authorize]
     public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
     {
-        // TODO: Send GetDashboardQuery via MediatR
-        // var result = await _mediator.Send(new GetDashboardQuery(), cancellationToken);
-
-        var model = new DashboardViewModel { TotalRequestCount = 0, PendingApprovalCount = 0, IsManager = false };
+        var userId = this.GetUserId();
+        var isManager = this.IsManager();
+        var result = await mediator.Send(new GetDashboardQuery(userId ?? string.Empty, isManager), cancellationToken);
+        var model = mapper.Map<DashboardViewModel>(result);
         return View(model);
     }
 
